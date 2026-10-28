@@ -117,7 +117,8 @@ section.block { padding-block: 64px 8px; }
 .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); padding-top: 16px; }
 .card { border: 1px solid var(--line); background: var(--surface); border-radius: 20px; padding: 18px; display: grid; grid-template-rows: auto 1fr auto; gap: 12px; min-width: 0; }
 .card-top { display: flex; gap: 12px; align-items: center; min-width: 0; }
-.mono { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 500; font-size: 16px; letter-spacing: -0.02em; color: #fff; }
+.mono { flex: none; width: 40px; height: 40px; border-radius: 12px; overflow: hidden; background: #fff; }
+.mono img, .orb i img, .run i img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .card h3 { font-size: 17px; letter-spacing: -0.02em; line-height: 1.2; overflow-wrap: anywhere; }
 .card .cat { font-size: 13px; color: var(--ink-3); }
 .card p { color: var(--ink-2); font-size: 14.5px; line-height: 1.45; }
@@ -161,7 +162,7 @@ details[open] summary::after { transform: rotate(45deg); }
 .orb { position: absolute; left: 50%; top: 50%; }
 .orb > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; background: #fff; color: #25253D; border-radius: 999px; padding: 6px 11px 6px 8px; font-size: 13px; font-weight: 500; box-shadow: 0 6px 18px rgba(80,0,20,.18); transform: translate(-50%,-50%); animation: spin 140s linear infinite reverse; }
 .ring.inner .orb > span { animation-duration: 110s; animation-direction: normal; }
-.orb i { width: 18px; height: 18px; border-radius: 6px; display: grid; place-items: center; font-style: normal; font-size: 9.5px; color: #fff; letter-spacing: 0; }
+.orb i { width: 18px; height: 18px; border-radius: 6px; overflow: hidden; }
 .hub-core { position: absolute; left: 50%; top: 50%; width: 30%; aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: #fff; color: var(--red); display: grid; place-items: center; align-content: center; gap: 4px; box-shadow: 0 0 0 10px rgba(255,255,255,.18), 0 0 0 22px rgba(255,255,255,.08); }
 .hub-core .iso { width: 44%; height: auto; }
 .hub-core span { font-size: 15px; font-weight: 500; color: #25253D; letter-spacing: -0.02em; }
@@ -172,7 +173,7 @@ details[open] summary::after { transform: rotate(45deg); }
 .hub-stats b { font-size: clamp(26px, 3vw, 34px); font-weight: 500; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
 .hub-stats div:first-child b { color: var(--red); }
 .hub-stats span { font-size: 13px; color: #6C6C7D; }
-@media (max-width: 480px) { .orb > span { font-size: 11.5px; padding: 4px 9px 4px 5px; } .orb i { width: 15px; height: 15px; font-size: 8px; } }
+@media (max-width: 480px) { .orb > span { font-size: 11.5px; padding: 4px 9px 4px 5px; } .orb i { width: 15px; height: 15px; } }
 
 /* Demo chat */
 .demo { display: grid; gap: 16px; }
@@ -192,7 +193,7 @@ details[open] summary::after { transform: rotate(45deg); }
 .bubble-user { justify-self: end; max-width: 80%; background: var(--ink); color: var(--bg); border-radius: 18px 18px 4px 18px; padding: 12px 16px; font-size: 15.5px; }
 .steps-run { display: flex; flex-wrap: wrap; gap: 8px; }
 .run { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 6px; color: var(--ink-2); }
-.run i { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-style: normal; font-size: 9.5px; font-weight: 500; color: #fff; }
+.run i { width: 20px; height: 20px; border-radius: 6px; overflow: hidden; background: #fff; }
 .run em { font-style: normal; color: var(--ink); font-weight: 500; }
 .run .ok { color: var(--live); font-size: 13px; }
 .bubble-one { background: var(--surface); border: 1px solid var(--line); border-radius: 18px 18px 18px 4px; padding: 16px 18px; display: grid; gap: 12px; font-size: 15px; min-width: 0; }
@@ -538,9 +539,45 @@ footer p { color: var(--ink-2); font-size: 14px; max-width: 60ch; }
    .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 
   const STATUS = { L: { label: "Live", cls: "live" }, P: { label: "In progress", cls: "prog" }, S: { label: "Coming soon", cls: "soon" } };
-  const TILE = ["#FF355E", "#4A4A6A", "#07A2AD", "#C60F35", "#3F3F55", "#0B8A6A", "#FF9153"];
-  const tileColor = (s) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return TILE[h % TILE.length]; };
-  const initials = (n) => { const w = n.replace(/[^A-Za-z0-9 ]/g, " ").trim().split(/\s+/); return (w.length > 1 ? w[0][0] + w[1][0] : n.slice(0, 2)).toUpperCase(); };
+  const LOGO = {
+    "Notion": "notion.svg", "Atlassian": "atlassian.png", "Linear": "linear.png", "Canva": "canva.png",
+    "Miro": "miro.png", "Airtable": "airtable.png", "Trello": "trello.png", "Granola": "granola.png",
+    "Modjo": "modjo.png", "Amplitude": "amplitude.png", "Stripe": "stripe.png", "PayPal": "paypal.png",
+    "SlidesGPT": "slidesgpt.png", "Excalidraw": "excalidraw.png", "Shutterstock": "shutterstock.png",
+    "Primo": "primo.png", "Firecrawl": "firecrawl.png", "Context7": "context7.png", "Twilio": "twilio.png",
+    "Superset": "superset.png", "Abacum": "abacum.png", "Slack": "slack.png",
+    "Adobe Workfront": "adobe_workfront.png", "Ahrefs": "ahrefs.png", "Apollo.io": "apollo.png",
+    "Articulate": "articulate.png", "Asana": "asana.png", "Ashby": "ashby.png", "Atlar": "atlar.png",
+    "Attio": "attio.png", "Avalara AvaTax": "avalara_avatax.png", "Avalara E-Invoicing": "avalara_elr.png",
+    "Box": "box.png", "Brex": "brex.png", "Calendly": "calendly.png", "Campfire": "campfire.png",
+    "Carta": "carta.png", "ChartMogul": "chartmogul.png", "Circleback": "circleback.png", "Clay": "clay.png",
+    "ClickHouse": "clickhouse.png", "ClickUp": "clickup.png", "Close": "close.png", "Cloverleaf": "cloverleaf.png",
+    "Coursera": "coursera.png", "Craft": "craft.png", "Datadog": "datadog.png",
+    "Datarails FinanceOS": "datarails.png", "DeepL": "deepl.png", "Dext": "dext.png", "Digits": "digits.png",
+    "DocuSeal": "docuseal.png", "Docusign": "docusign.png", "Drata": "drata.png", "Dropbox": "dropbox.png",
+    "Embat": "embat.png", "Exa": "exa.png", "Fathom": "fathom.png", "Fellow": "fellow.png", "Figma": "figma.png",
+    "Fireflies": "fireflies.png", "FreshBooks": "freshbooks.png", "GitHub": "github.png", "Gmail": "gmail.png",
+    "GoCardless": "gocardless.png", "Google Calendar": "google_calendar.png", "Google Drive": "google_drive.png",
+    "Gusto": "gusto.png", "Hyperline": "hyperline.png", "HubSpot": "hubspot.png", "Ironclad": "ironclad.png",
+    "iubenda": "iubenda.png", "Jotform": "jotform.png", "JustCall": "justcall.png", "Kahoot!": "kahoot.svg",
+    "Klaviyo": "klaviyo.png", "LawVu": "lawvu.png", "Lucid": "lucid.png", "MailerLite": "mailerlite.png",
+    "Mandrill": "mandrill.png", "Mercury": "mercury.png", "Metaview": "metaview.png", "Metricool": "metricool.png",
+    "Microsoft 365 Copilot": "microsoft_365_copilot.png", "Microsoft Calendar": "microsoft_calendar.svg",
+    "Microsoft Teams": "microsoft_teams.svg", "Mixpanel": "mixpanel.png", "Monday": "monday.png",
+    "Navan": "navan.png", "Otter.ai": "otter.png", "Otto": "otto.png", "Outreach": "outreach.png",
+    "PandaDoc": "pandadoc.png", "Pipedrive": "pipedrive.png", "Pitch": "pitch.png", "PostHog": "posthog.png",
+    "Process Street": "process_street.png", "Productive": "productive.png", "Pylon": "pylon.png",
+    "Qonto": "qonto.png", "Ramp": "ramp.png", "Read AI": "read_ai.png", "Resend": "resend.png",
+    "Rillet": "rillet.png", "Robin": "robin.png", "Salesforce": "salesforce.png", "Sentry": "sentry.png",
+    "Shopify": "shopify.png", "SignNow": "signnow.png", "Snowflake": "snowflake.png", "Supabase": "supabase.png",
+    "Superhuman Mail": "superhuman.png", "Tabs": "tabs.png", "Tally": "tally.png", "Teamtailor": "teamtailor.png",
+    "Todoist": "todoist.png", "Typeform": "typeform.png", "Udemy Business": "udemy_business.png",
+    "UptimeRobot": "uptimerobot.png", "Vercel": "vercel.png", "Webex": "webex.png", "Webflow": "webflow.png",
+    "Whimsical": "whimsical.png", "Wix": "wix.png", "WordPress.com": "wordpress.png", "Workable": "workable.png",
+    "Xero": "xero.png", "Zapier": "zapier.png", "Zoho Books": "zoho_books.png", "Zoho CRM": "zoho_crm.png",
+    "Zoho Desk": "zoho_desk.png", "Zoom": "zoom.png", "ZoomInfo": "zoominfo.png", "Factorial": "factorial.svg"
+  };
+  const logo = (n) => `<img src="logos/${LOGO[n]}" alt="" loading="lazy">`;
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const state = { q: "", st: "all", cat: "All" };
@@ -583,7 +620,7 @@ footer p { color: var(--ink-2); font-size: 14px; max-width: 60ch; }
     const list = DATA.filter(d => matches(d, false));
     grid.innerHTML = list.map(d => `
       <article class="card">
-        <div class="card-top"><div class="mono" style="background:${tileColor(d.name)}" aria-hidden="true">${esc(initials(d.name))}</div><div style="min-width:0"><h3>${esc(d.name)}</h3><div class="cat">${esc(d.cat)}</div></div></div>
+        <div class="card-top"><div class="mono" aria-hidden="true">${logo(d.name)}</div><div style="min-width:0"><h3>${esc(d.name)}</h3><div class="cat">${esc(d.cat)}</div></div></div>
         <p>${esc(d.desc)}</p>
         <span class="pill ${STATUS[d.st].cls}">${STATUS[d.st].label}</span>
       </article>`).join("");
@@ -600,7 +637,7 @@ footer p { color: var(--ink-2); font-size: 14px; max-width: 60ch; }
     el.innerHTML = names.map((n, i) => {
       const a = (i / names.length) * Math.PI * 2 + offset;
       const x = 50 + r * Math.cos(a), y = 50 + r * Math.sin(a);
-      return `<div class="orb" style="left:${x}%;top:${y}%"><span><i style="background:${tileColor(n)}">${esc(initials(n))}</i>${esc(n === "Atlassian" ? "Jira" : n)}</span></div>`;
+      return `<div class="orb" style="left:${x}%;top:${y}%"><span><i>${logo(n)}</i>${esc(n === "Atlassian" ? "Jira" : n)}</span></div>`;
     }).join("");
   };
   orbit("ring-outer", ["Slack","HubSpot","Notion","Stripe","Canva","DeepL","Miro","Linear","Zapier","Modjo"], window.innerWidth < 520 ? 37 : 44, -Math.PI / 2);
@@ -608,7 +645,7 @@ footer p { color: var(--ink-2); font-size: 14px; max-width: 60ch; }
 
   // ---------- Demo chat ----------
   const ISO = `<svg class="iso" aria-hidden="true" viewBox="0 0 714 714" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M581.784 634.362C520.414 684.16 442.192 714 357 714C271.808 714 193.586 684.16 132.216 634.362C193.586 584.563 271.808 554.723 357 554.723C442.192 554.723 520.414 584.563 581.784 634.362Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M130.258 548.192C86.6807 496.565 60.4154 429.85 60.4154 357C60.4154 193.201 193.201 60.4154 357 60.4154C520.799 60.4154 653.585 193.201 653.585 357C653.585 429.85 627.319 496.565 583.742 548.192C598.735 557.56 613.105 567.827 626.773 578.918L632.744 583.763C683.513 522.099 714 443.11 714 357C714 159.834 554.166 0 357 0C159.834 0 0 159.834 0 357C0 443.11 30.487 522.099 81.2561 583.763L87.227 578.918C100.895 567.827 115.265 557.56 130.258 548.192Z" fill="currentColor"></path><path d="M488.815 346.015C488.815 418.815 429.8 477.831 357 477.831C284.2 477.831 225.185 418.815 225.185 346.015C225.185 273.216 284.2 214.2 357 214.2C429.8 214.2 488.815 273.216 488.815 346.015Z" fill="currentColor"></path></svg>`;
-  const ico = (n) => `<i style="background:${tileColor(n)}">${esc(initials(n))}</i>`;
+  const ico = (n) => `<i>${logo(n)}</i>`;
   const SCEN = [
     { app: "HubSpot", area: "Sales", title: "First deals by new reps",
       q: "Which new sales reps have closed their first HubSpot deal?",
